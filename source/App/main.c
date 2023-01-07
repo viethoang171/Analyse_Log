@@ -67,7 +67,7 @@ void_t task4();
 
 void_t task5();
 
-u32_t pow10(u32_t i);
+u32_t pow10(u32_t dwDegree);
 
 u32_t stringToNum(u8_t byStr[MAX_LENGTH_FILE]);
 void_t task6();
@@ -84,6 +84,13 @@ i32_t main()
     return 0;
 }
 
+/**
+ * @func fileToStr
+ * @brief Doc du lieu file ben ngoai vao chuoi thong qua con tro
+ *
+ * @param [pibStr] : con tro doc du lieu file
+ * @retval i32_t
+ */
 i32_t fileToStr(u8_p pibStr)
 {
     i32_t dwStatus;
@@ -100,6 +107,12 @@ i32_t fileToStr(u8_p pibStr)
     return dwStatus;
 }
 
+/**
+ * @func count
+ * @brief Dem so ban tin trong file
+ * @param [pibFileLog] : con tro doc du lieu file
+ * @retval i32_t
+ */
 i32_t count(u8_p pibFileLog)
 {
     i32_t dwCount = 0;
@@ -117,15 +130,28 @@ i32_t count(u8_p pibFileLog)
     return dwCount;
 }
 
-u32_t pow10(u32_t i)
+/**
+ * @func pow10
+ * @brief Tinh luy thua bac i cua 10
+ * @param [dwDegree] : bac luy thua
+ * @retval u32_t
+ */
+u32_t pow10(u32_t dwDegree)
 {
-    if (i == 0)
+    if (dwDegree == 0)
         return 1;
     u32_t dwResult = 1;
-    for (u32_t k = 1; k <= i; k++)
+    for (u32_t k = 1; k <= dwDegree; k++)
         dwResult *= 10;
     return dwResult;
 }
+
+/**
+ * @func stringToNum
+ * @brief Chuyen do chuoi sang so
+ * @param [byStr[MAX_LENGTH_FILE]] : chuoi dung de chuyen sang so
+ * @retval u32_t
+ */
 u32_t stringToNum(u8_t byStr[MAX_LENGTH_FILE])
 {
     u32_t dwResult = 0;
@@ -137,6 +163,13 @@ u32_t stringToNum(u8_t byStr[MAX_LENGTH_FILE])
     }
     return dwResult;
 }
+
+/**
+ * @func task5
+ * @brief thuc hien yeu cau 5
+ * @param [] :
+ * @retval void_t
+ */
 void_t task5()
 {
     u32_t dwMaxDelay = 0;
@@ -230,12 +263,24 @@ void_t task5()
     printf("Do tre lon nhat la: %d Millisecond\n", dwMaxDelay);
 }
 
+/**
+ * @func task1
+ * @brief thuc hien yeu cau 1
+ * @param [] :
+ * @retval void_t
+ */
 void_t task1()
 {
     u32_t dwCount = count(g_fileStr);
     printf("\nSo luong ban tin la: %d", dwCount);
 }
 
+/**
+ * @func task2
+ * @brief thuc hien yeu cau 2
+ * @param [] :
+ * @retval void_t
+ */
 void_t task2()
 {
     u8_t byAddressNWK[MAX_LENGTH_FILE] = "";
@@ -275,6 +320,12 @@ void_t task2()
     printf("\nSo ban tin gui di la: %d\n", dwCountNews);
 }
 
+/**
+ * @func task3
+ * @brief thuc hien yeu cau 3
+ * @param [] :
+ * @retval void_t
+ */
 void_t task3()
 {
     u8_t pbyBufferString[20][MAX_LENGTH_FILE];
@@ -342,6 +393,12 @@ void_t task3()
         printf("thiet bi %d co dia chi la : NWK %s, ENDPOINT %s\n", i, pbyBufferString[i], pbyBufferEndPoint[i]);
 }
 
+/**
+ * @func task4
+ * @brief thuc hien yeu cau 4
+ * @param [] :
+ * @retval void_t
+ */
 void_t task4()
 {
     u32_t dwCountErrorNews = 0;
@@ -385,6 +442,12 @@ void_t task4()
     printf("\nSo ban tin loi: %d\n", dwCountErrorNews);
 }
 
+/**
+ * @func task6
+ * @brief thuc hien yeu cau 6
+ * @param [] :
+ * @retval void_t
+ */
 void_t task6()
 {
     u32_t dwSumTimeDelay = 0;
