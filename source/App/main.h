@@ -12,31 +12,28 @@
  * Lumi, JSC.
  * All Rights Reserved
  *
- * File name: function.h
+ * File name: main.h
  *
  * Description:
  *
  * Author: HoangNV
  *
- * Last Changed By:  $Author: HoangNV $
+ * Last Changed By:  $Author: hoangNV $
  * Revision:         $Revision: $
- * Last Changed:     $Date: $Jan 09, 2023
+ * Last Changed:     $Date: $Jan 9, 2023
  *
  * Code sample:
  ******************************************************************************/
 // Enclosing macro to prevent multiple inclusion
-#ifndef FUNCTION_H_
-#define FUNCTION_H_
+#ifndef MAIN_H_
+#define MAIN_H_
 /******************************************************************************/
 /*                              INCLUDE FILES                                 */
-#include <stdio.h>
 #include "../utlis/typedefs.h"
 /******************************************************************************/
 
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
-#define MAX_LENGTH_FILE 5000
-#define FILENAME "log.txt"
 /******************************************************************************/
 
 /******************************************************************************/
@@ -53,17 +50,7 @@
 
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
-i32_t fileToStr(u8_p pibStr);
-i32_t countNews(u8_p pibFileLog);
-u32_t pow10(u32_t dwDegree);
-u32_t stringToNum(u8_t byStr[MAX_LENGTH_FILE]);
-void_t getCountSentNews();
-void_t getCountSentNewsWithInputCode();
-void_t getCountSwitch();
-void_t getCountErrorNews();
-void_t getMaxDelayTime();
-void_t getAverageTimeDelay();
 /******************************************************************************/
 
 /******************************************************************************/
-#endif // FUNCTION_H_
+#endif /* MAIN_H_ */

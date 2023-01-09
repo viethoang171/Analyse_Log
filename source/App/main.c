@@ -12,24 +12,24 @@
  * Lumi, JSC.
  * All Rights Reserved
  *
- * File name: Example.c
+ * File name: main.c
  *
- * Description: This code is used for tranning Lumi IOT member. It is the code form statandard.
+ * Description: This code is used to execute assignment 2 on Funix, process data on log.txt
  *
- * Author: PhuongNP
+ * Author: HoangNV
  *
- * Last Changed By:  $Author: phuongnp $
+ * Last Changed By:  $Author: hoangNV $
  * Revision:         $Revision: $
- * Last Changed:     $Date: $Jun 9, 2021
+ * Last Changed:     $Date: $Jan 09, 2023
  *
  * Code sample:
  ******************************************************************************/
 /******************************************************************************/
 /*                              INCLUDE FILES                                 */
 #include <stdio.h>
-#include "source/utils/typedefs.h"
-#include "source/Mid/function.h"
 #include <string.h>
+#include "../mid/function.h"
+#include "main.h"
 /******************************************************************************/
 
 /******************************************************************************/
@@ -57,11 +57,11 @@ u8_t g_fileStr[MAX_LENGTH_FILE];
 i32_t main()
 {
     fileToStr(g_fileStr);
-    task1();
-    task2();
-    task3();
-    task4();
-    task5();
-    task6();
+    getCountSentNews();
+    getCountSentNewsWithInputCode();
+    getCountSwitch();
+    getCountErrorNews();
+    getMaxDelayTime();
+    getAverageTimeDelay();
     return 0;
 }

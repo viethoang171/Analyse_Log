@@ -12,22 +12,21 @@
  * Lumi, JSC.
  * All Rights Reserved
  *
- * File name: Example.c
+ * File name: function.c
  *
  * Description: This code is used for tranning Lumi IOT member. It is the code form statandard.
  *
- * Author: PhuongNP
+ * Author: HoangNV
  *
- * Last Changed By:  $Author: phuongnp $
+ * Last Changed By:  $Author: HoangNV $
  * Revision:         $Revision: $
- * Last Changed:     $Date: $Jun 9, 2021
+ * Last Changed:     $Date: $Jan 09, 2023
  *
  * Code sample:
  ******************************************************************************/
 /******************************************************************************/
 /*                              INCLUDE FILES                                 */
 #include <stdio.h>
-#include "typedefs.h"
 #include "function.h"
 /******************************************************************************/
 
@@ -79,7 +78,7 @@ i32_t fileToStr(u8_p pibStr)
  * @param [pibFileLog] : con tro doc du lieu file
  * @retval i32_t
  */
-i32_t count(u8_p pibFileLog)
+i32_t countNews(u8_p pibFileLog)
 {
     i32_t dwCount = 0;
     u8_t byDirect[] = "\"cmd\":\"set\"";
@@ -131,69 +130,12 @@ u32_t stringToNum(u8_t byStr[MAX_LENGTH_FILE])
 }
 
 /**
- * @func count
- * @brief Dem so ban tin trong file
- * @param [pibFileLog] : con tro doc du lieu file
- * @retval i32_t
- */
-i32_t count(u8_p pibFileLog)
-{
-    i32_t dwCount = 0;
-    u8_t byDirect[] = "\"cmd\":\"set\"";
-    u8_p pbyCheckEnd = NULL;
-    do
-    {
-        if (pbyCheckEnd == NULL)
-            pbyCheckEnd = strstr(pibFileLog, byDirect);
-        else
-            pbyCheckEnd = strstr(pbyCheckEnd + 1, byDirect);
-        if (pbyCheckEnd != NULL)
-            dwCount++;
-    } while (pbyCheckEnd != NULL);
-    return dwCount;
-}
-
-/**
- * @func pow10
- * @brief Tinh luy thua bac i cua 10
- * @param [dwDegree] : bac luy thua
- * @retval u32_t
- */
-u32_t pow10(u32_t dwDegree)
-{
-    if (dwDegree == 0)
-        return 1;
-    u32_t dwResult = 1;
-    for (u32_t k = 1; k <= dwDegree; k++)
-        dwResult *= 10;
-    return dwResult;
-}
-
-/**
- * @func stringToNum
- * @brief Chuyen do chuoi sang so
- * @param [byStr[MAX_LENGTH_FILE]] : chuoi dung de chuyen sang so
- * @retval u32_t
- */
-u32_t stringToNum(u8_t byStr[MAX_LENGTH_FILE])
-{
-    u32_t dwResult = 0;
-    u32_t dwLengthStr = strlen(byStr);
-    for (u32_t i = 0; i < dwLengthStr; i++)
-    {
-        u32_t dwChuSo = byStr[dwLengthStr - i - 1] - 48;
-        dwResult += dwChuSo * pow10(i);
-    }
-    return dwResult;
-}
-
-/**
- * @func task5
- * @brief thuc hien yeu cau 5
+ * @func getMaxDelayTime
+ * @brief thuc hien yeu cau 5: tinh thoi gian delay lon nhat trong lich su file log
  * @param [] :
  * @retval void_t
  */
-void_t task5()
+void_t getMaxDelayTime()
 {
     u32_t dwMaxDelay = 0;
     u8_t byEnd[MAX_LENGTH_FILE] = "";
@@ -287,24 +229,24 @@ void_t task5()
 }
 
 /**
- * @func task1
- * @brief thuc hien yeu cau 1
+ * @func getCountSentNews
+ * @brief thuc hien yeu cau 1: tinh so ban tin da gui di
  * @param [] :
  * @retval void_t
  */
-void_t task1()
+void_t getCountSentNews()
 {
     u32_t dwCount = count(g_fileStr);
     printf("\nSo luong ban tin la: %d", dwCount);
 }
 
 /**
- * @func task2
- * @brief thuc hien yeu cau 2
+ * @func getCountSentNewsWithInputCode
+ * @brief thuc hien yeu cau 2: dem so ban tin voi ma network cho truoc
  * @param [] :
  * @retval void_t
  */
-void_t task2()
+void_t getCountSentNewsWithInputCode()
 {
     u8_t byAddressNWK[MAX_LENGTH_FILE] = "";
     printf("\nNhap dia chi nwk cua thiet bi: %");
@@ -344,12 +286,12 @@ void_t task2()
 }
 
 /**
- * @func task3
- * @brief thuc hien yeu cau 3
+ * @func getCountSwitch
+ * @brief thuc hien yeu cau 3: dem so cong tac trong file log
  * @param [] :
  * @retval void_t
  */
-void_t task3()
+void_t getCountSwitch()
 {
     u8_t pbyBufferString[20][MAX_LENGTH_FILE];
     u8_t pbyBufferEndPoint[20][MAX_LENGTH_FILE];
@@ -417,12 +359,12 @@ void_t task3()
 }
 
 /**
- * @func task4
- * @brief thuc hien yeu cau 4
+ * @func getCountErrorNews
+ * @brief thuc hien yeu cau 4: dem so ban tin bi loi trong lich su file log
  * @param [] :
  * @retval void_t
  */
-void_t task4()
+void_t getCountErrorNews()
 {
     u32_t dwCountErrorNews = 0;
     u8_p pbyCheckEnd = g_fileStr;
@@ -466,12 +408,12 @@ void_t task4()
 }
 
 /**
- * @func task6
- * @brief thuc hien yeu cau 6
+ * @func getAverageTimeDelay
+ * @brief thuc hien yeu cau 6: tinh thoi gian delay trung binh cac ban tin khong bi loi
  * @param [] :
  * @retval void_t
  */
-void_t task6()
+void_t getAverageTimeDelay()
 {
     u32_t dwSumTimeDelay = 0;
     u32_t dwCountCorrectNews = 0;
