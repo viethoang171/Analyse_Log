@@ -14,7 +14,7 @@
  *
  * File name: function.c
  *
- * Description: This code is used for tranning Lumi IOT member. It is the code form statandard.
+ * Description: This code is used to save functions in assignment on Funix
  *
  * Author: HoangNV
  *
@@ -488,7 +488,6 @@ void_t getAverageTimeDelay()
             for (u32_t k = 0; k < dwLengthSecond; k++)
                 if (*(byDelaySecond + k) != '.')
                     bySecondSet[dwLengthSecondSet++] = *(byDelaySecond + k);
-            // printf("Set: %s, %s\n",byMinuteSet,bySecondSet);
         }
         else
         {
