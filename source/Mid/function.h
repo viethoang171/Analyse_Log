@@ -30,12 +30,24 @@
 /******************************************************************************/
 /*                              INCLUDE FILES                                 */
 #include <stdio.h>
-#include "../utlis/typedefs.h"
+#include "../utils/typedefs.h"
 /******************************************************************************/
 
 /******************************************************************************/
 /*                     EXPORTED TYPES and DEFINITIONS                         */
 #define MAX_LENGTH_FILE 5000
+#define MAX_LENGTH_STRING_NUM 20
+#define MAX_LENGTH_MINUTE 20
+#define MAX_LENGTH_SECOND 20
+#define MAX_LENGTH_REQID 20
+#define MAX_LENGTH_DIRECT_NEWS 10
+#define MAX_LENGTH_NWK 20
+#define MAX_LENGTH_NETWORK 10
+#define MAX_LENGTH_ENDPOINT 10
+#define TINH_MAX_DELAY_TIME 5
+#define TINH_TRUNG_BINH_DELAY_TIME 6
+#define CONVERT_MINUTE_TO_SECOND 60
+#define CONVERT_SECOND_TO_MILLISECOND 1000
 #define FILENAME "log.txt"
 /******************************************************************************/
 
@@ -54,9 +66,6 @@
 /******************************************************************************/
 /*                            EXPORTED FUNCTIONS                              */
 i32_t fileToStr(u8_p pibStr);
-i32_t countNews(u8_p pibFileLog);
-u32_t pow10(u32_t dwDegree);
-u32_t stringToNum(u8_t byStr[MAX_LENGTH_FILE]);
 void_t getCountSentNews();
 void_t getCountSentNewsWithInputCode();
 void_t getCountSwitch();
