@@ -191,7 +191,7 @@ static void_t processTimeDelay(u32_t dwNameTask, u32_p pdwResult)
             for (u32_t k = 0; k < dwLengthSecond; k++)
                 if (*(byDelaySecond + k) != '.')
                     bySecondStatus[dwLengthSecondStatus++] = *(byDelaySecond + k);
-            u32_t dwTimeDelay = (stringToNum(byMinuteStatus) - stringToNum(byMinuteSet)) * 60 * 1000 + (stringToNum(bySecondStatus) - stringToNum(bySecondSet));
+            u32_t dwTimeDelay = (stringToNum(byMinuteStatus) - stringToNum(byMinuteSet)) * CONVERT_MINUTE_TO_SECOND * CONVERT_SECOND_TO_MILLISECOND + (stringToNum(bySecondStatus) - stringToNum(bySecondSet));
             if (dwNameTask == TINH_MAX_DELAY_TIME)
             {
                 if (dwTimeDelay > *pdwResult)
@@ -205,7 +205,7 @@ static void_t processTimeDelay(u32_t dwNameTask, u32_p pdwResult)
         }
         pbyCheckEnd = strstr(pbyCheckEnd + 1, byEnd);
     }
-    if (TINH_TRUNG_BINH_DELAY_TIME == 6)
+    if (dwNameTask == TINH_TRUNG_BINH_DELAY_TIME)
     {
         *pdwResult = *pdwResult / dwCountCorrectNews;
     }
@@ -235,104 +235,6 @@ i32_t fileToStr(u8_p pibStr)
     fclose(fp);
     fp = NULL;
     return dwStatus;
-}
-
-/**
- * @func getMaxDelayTime
- * @brief thuc hien yeu cau 5: tinh thoi gian delay lon nhat tren lich su file log
- * @param [] :
- * @retval void_t
- */
-void_t getMaxDelayTime()
-{
-    u32_t dwMaxDelay;
-    u8_t byEnd[2] = "";
-    byEnd[0] = 10; // dau enter
-    u8_p pbyCheckEnd = g_fileStr;
-
-    u8_t byMinuteSet[MAX_LENGTH_MINUTE] = "";
-    u8_t byMinuteStatus[MAX_LENGTH_MINUTE] = "";
-    u8_t bySecondSet[MAX_LENGTH_SECOND] = "";
-    u8_t bySecondStatus[MAX_LENGTH_SECOND] = "";
-
-    u8_t byReqidSet[MAX_LENGTH_REQID] = "";
-    u8_t byReqidStatus[MAX_LENGTH_REQID] = "";
-    while (pbyCheckEnd != NULL)
-    {
-        u8_p pbyFindMinute = strstr(pbyCheckEnd, ":");
-
-        // xu ly Time
-        u8_p pbyFindSecond = strstr(pbyFindMinute + 1, ":");
-        u8_p pbyFindEndTime = strstr(pbyFindSecond + 1, "]");
-        u8_t byDelayMinute[MAX_LENGTH_MINUTE] = "";
-        u8_t byDelaySecond[MAX_LENGTH_SECOND] = "";
-        u32_t dwLengthMinute = pbyFindSecond - pbyFindMinute - 1;
-        for (u32_t i = 0; i < dwLengthMinute; i++)
-            byDelayMinute[i] = *(pbyFindMinute + i + 1);
-        u32_t dwLengthSecond = pbyFindEndTime - pbyFindSecond - 1;
-        for (u32_t i = 0; i < dwLengthSecond; i++)
-            byDelaySecond[i] = *(pbyFindSecond + i + 1);
-
-        // FindDirect
-        u8_p pbyFindDirect = strstr(pbyCheckEnd, "\"cmd\":");
-        u32_t dwLengthDirect = strlen("\"cmd\":");
-        u8_p pbyEndDirect = strstr(pbyCheckEnd, ",");
-        u8_t byDirect[MAX_LENGTH_DIRECT_NEWS] = "";
-        for (u32_t i = 0; i < pbyEndDirect - pbyFindDirect - dwLengthDirect; i++)
-            byDirect[i] = *(pbyFindDirect + i + dwLengthDirect);
-
-        // FindCorrectNews
-        u8_p pbyFindReqid = strstr(pbyCheckEnd, "\"reqid\": \"");
-        u32_t dwLengthReqid = strlen("\"reqid\": \"");
-        u8_p pbyFindReqidEnd = strstr(pbyFindReqid + dwLengthReqid, "\"");
-        u32_t dwLengthReqidCode = pbyFindReqidEnd - pbyFindReqid - dwLengthReqid;
-        if (strcmp(byDirect, "\"set\"") == 0)
-        {
-            byReqidSet[MAX_LENGTH_REQID] = "";
-            for (u32_t i = 0; i < dwLengthReqidCode; i++)
-                byReqidSet[i] = *(pbyFindReqid + i + dwLengthReqid);
-        }
-        else
-        {
-            byReqidStatus[MAX_LENGTH_REQID] = "";
-            for (u32_t i = 0; i < dwLengthReqidCode; i++)
-                byReqidStatus[i] = *(pbyFindReqid + i + dwLengthReqid);
-            if (strcmp(byReqidSet, byReqidStatus) != 0)
-            {
-                pbyCheckEnd = strstr(pbyCheckEnd + 1, byEnd);
-                continue;
-            }
-        }
-
-        // Xu ly Direct
-        if (strcmp(byDirect, "\"set\"") == 0)
-        {
-            byMinuteSet[MAX_LENGTH_MINUTE] = "";
-            bySecondSet[MAX_LENGTH_SECOND] = "";
-            for (u32_t k = 0; k < dwLengthMinute; k++)
-                byMinuteSet[k] = *(byDelayMinute + k);
-            u32_t dwLengthSecondSet = 0;
-            for (u32_t k = 0; k < dwLengthSecond; k++)
-                if (*(byDelaySecond + k) != '.')
-                    bySecondSet[dwLengthSecondSet++] = *(byDelaySecond + k);
-        }
-        else
-        {
-            byMinuteStatus[MAX_LENGTH_MINUTE] = "";
-            bySecondStatus[MAX_LENGTH_SECOND] = "";
-            for (u32_t k = 0; k < dwLengthMinute; k++)
-                byMinuteStatus[k] = *(byDelayMinute + k);
-            u32_t dwLengthSecondStatus = 0;
-            for (u32_t k = 0; k < dwLengthSecond; k++)
-                if (*(byDelaySecond + k) != '.')
-                    bySecondStatus[dwLengthSecondStatus++] = *(byDelaySecond + k);
-            u32_t dwTimeDelay = (stringToNum(byMinuteStatus) - stringToNum(byMinuteSet)) * 60 * 1000 + (stringToNum(bySecondStatus) - stringToNum(bySecondSet));
-            if (dwTimeDelay > dwMaxDelay)
-                dwMaxDelay = dwTimeDelay;
-        }
-        pbyCheckEnd = strstr(pbyCheckEnd + 1, byEnd);
-    }
-    printf("Do tre lon nhat la: %d Millisecond\n", dwMaxDelay);
 }
 
 /**
@@ -391,7 +293,6 @@ void_t getCountSentNewsWithInputCode()
     }
     printf("\nSo ban tin gui di la: %d\n", dwCountNews);
 }
-
 /**
  * @func getCountSwitch
  * @brief thuc hien yeu cau 3: dem so cong tac tren lich su file log
@@ -523,98 +424,22 @@ void_t getCountErrorNews()
 void_t getAverageTimeDelay()
 {
     u32_t dwAveTimeDelay;
-    u32_t dwSumTimeDelay = 0;
-    u32_t dwCountCorrect = 0;
-    u8_t byEnd[2] = "";
-    byEnd[0] = 10; // dau enter
-    u8_p pbyCheckEnd = g_fileStr;
-
-    u8_t byMinuteSet[MAX_LENGTH_MINUTE] = "";
-    u8_t byMinuteStatus[MAX_LENGTH_MINUTE] = "";
-    u8_t bySecondSet[MAX_LENGTH_SECOND] = "";
-    u8_t bySecondStatus[MAX_LENGTH_SECOND] = "";
-
-    u8_t byReqidSet[MAX_LENGTH_REQID] = "";
-    u8_t byReqidStatus[MAX_LENGTH_REQID] = "";
-    while (pbyCheckEnd != NULL)
-    {
-        u8_p pbyFindMinute = strstr(pbyCheckEnd, ":");
-
-        // xu ly Time
-        u8_p pbyFindSecond = strstr(pbyFindMinute + 1, ":");
-        u8_p pbyFindEndTime = strstr(pbyFindSecond + 1, "]");
-        u8_t byDelayMinute[MAX_LENGTH_MINUTE] = "";
-        u8_t byDelaySecond[MAX_LENGTH_SECOND] = "";
-        u32_t dwLengthMinute = pbyFindSecond - pbyFindMinute - 1;
-        for (u32_t i = 0; i < dwLengthMinute; i++)
-            byDelayMinute[i] = *(pbyFindMinute + i + 1);
-        u32_t dwLengthSecond = pbyFindEndTime - pbyFindSecond - 1;
-        for (u32_t i = 0; i < dwLengthSecond; i++)
-            byDelaySecond[i] = *(pbyFindSecond + i + 1);
-
-        // FindDirect
-        u8_p pbyFindDirect = strstr(pbyCheckEnd, "\"cmd\":");
-        u32_t dwLengthDirect = strlen("\"cmd\":");
-        u8_p pbyEndDirect = strstr(pbyCheckEnd, ",");
-        u8_t byDirect[MAX_LENGTH_DIRECT_NEWS] = "";
-        for (u32_t i = 0; i < pbyEndDirect - pbyFindDirect - dwLengthDirect; i++)
-            byDirect[i] = *(pbyFindDirect + i + dwLengthDirect);
-
-        // FindCorrectNews
-        u8_p pbyFindReqid = strstr(pbyCheckEnd, "\"reqid\": \"");
-        u32_t dwLengthReqid = strlen("\"reqid\": \"");
-        u8_p pbyFindReqidEnd = strstr(pbyFindReqid + dwLengthReqid, "\"");
-        u32_t dwLengthReqidCode = pbyFindReqidEnd - pbyFindReqid - dwLengthReqid;
-        if (strcmp(byDirect, "\"set\"") == 0)
-        {
-            byReqidSet[MAX_LENGTH_REQID] = "";
-            for (u32_t i = 0; i < dwLengthReqidCode; i++)
-                byReqidSet[i] = *(pbyFindReqid + i + dwLengthReqid);
-        }
-        else
-        {
-            byReqidStatus[MAX_LENGTH_REQID] = "";
-            for (u32_t i = 0; i < dwLengthReqidCode; i++)
-                byReqidStatus[i] = *(pbyFindReqid + i + dwLengthReqid);
-            if (strcmp(byReqidSet, byReqidStatus) != 0)
-            {
-                pbyCheckEnd = strstr(pbyCheckEnd + 1, byEnd);
-                continue;
-            }
-        }
-
-        // Xu ly Direct
-        if (strcmp(byDirect, "\"set\"") == 0)
-        {
-            byMinuteSet[MAX_LENGTH_MINUTE] = "";
-            bySecondSet[MAX_LENGTH_SECOND] = "";
-            for (u32_t k = 0; k < dwLengthMinute; k++)
-                byMinuteSet[k] = *(byDelayMinute + k);
-            u32_t dwLengthSecondSet = 0;
-            for (u32_t k = 0; k < dwLengthSecond; k++)
-                if (*(byDelaySecond + k) != '.')
-                    bySecondSet[dwLengthSecondSet++] = *(byDelaySecond + k);
-        }
-        else
-        {
-            byMinuteStatus[MAX_LENGTH_MINUTE] = "";
-            bySecondStatus[MAX_LENGTH_SECOND] = "";
-            for (u32_t k = 0; k < dwLengthMinute; k++)
-                byMinuteStatus[k] = *(byDelayMinute + k);
-            u32_t dwLengthSecondStatus = 0;
-            for (u32_t k = 0; k < dwLengthSecond; k++)
-                if (*(byDelaySecond + k) != '.')
-                    bySecondStatus[dwLengthSecondStatus++] = *(byDelaySecond + k);
-            u32_t dwTimeDelay = (stringToNum(byMinuteStatus) - stringToNum(byMinuteSet)) * CONVERT_MINUTE_TO_SECOND * CONVERT_SECOND_TO_MILLISECOND + (stringToNum(bySecondStatus) - stringToNum(bySecondSet));
-            dwSumTimeDelay += dwTimeDelay;
-            dwCountCorrect++;
-        }
-        pbyCheckEnd = strstr(pbyCheckEnd + 1, byEnd);
-    }
-    dwAveTimeDelay = dwSumTimeDelay / dwCountCorrect;
+    processTimeDelay(TINH_TRUNG_BINH_DELAY_TIME, &dwAveTimeDelay);
     printf("Do tre trung binh la: %d Millisecond\n", dwAveTimeDelay);
 }
 
+/**
+ * @func getMaxDelayTime
+ * @brief thuc hien yeu cau 5: tinh thoi gian delay lon nhat tren lich su file log
+ * @param [] :
+ * @retval void_t
+ */
+void_t getMaxDelayTime()
+{
+    u32_t dwMaxDelay = 0;
+    processTimeDelay(TINH_MAX_DELAY_TIME, &dwMaxDelay);
+    printf("\nDo tre lon nhat la: %d Millisecond\n", dwMaxDelay);
+}
 /******************************************************************************/
 
 /******************************************************************************/
