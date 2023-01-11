@@ -25,30 +25,30 @@
  * Code sample:
  ******************************************************************************/
 /******************************************************************************/
-/*                              INCLUDE FILES                                 */
+/*                              iNCLUDE FiLES                                 */
 #include <stdio.h>
 #include "function.h"
 /******************************************************************************/
 
 /******************************************************************************/
-/*                     EXPORTED TYPES and DEFINITIONS                         */
+/*                     EXPORTED TYPES and DEFiNiTiONS                         */
 /******************************************************************************/
 
 /******************************************************************************/
-/*                              PRIVATE DATA                                  */
+/*                              PRiVATE DATA                                  */
 /******************************************************************************/
 
 /******************************************************************************/
 /*                              EXPORTED DATA                                 */
-extern u8_t g_fileStr[MAX_LENGTH_FILE];
+extern u8_t g_fileStr[MAX_LENGTH_FiLE];
 /******************************************************************************/
 
 /******************************************************************************/
-/*                            PRIVATE FUNCTIONS                               */
+/*                            PRiVATE FUNCTiONS                               */
 /******************************************************************************/
 
 /******************************************************************************/
-/*                            EXPORTED FUNCTIONS                              */
+/*                            EXPORTED FUNCTiONS                              */
 /**
  * @func fileToStr
  * @brief Doc du lieu file ben ngoai vao chuoi thong qua con tro
@@ -59,14 +59,14 @@ extern u8_t g_fileStr[MAX_LENGTH_FILE];
 i32_t fileToStr(u8_p pibStr)
 {
     i32_t dwStatus;
-    FILE *fp = NULL;
-    fp = fopen(FILENAME, "r");
+    FiLE *fp = NULL;
+    fp = fopen(FiLENAME, "r");
     if (fp == NULL)
     {
         printf("File does not exist\n");
         return -1;
     }
-    dwStatus = fread(pibStr, MAX_LENGTH_FILE, 1, fp);
+    dwStatus = fread(pibStr, MAX_LENGTH_FiLE, 1, fp);
     fclose(fp);
     fp = NULL;
     return dwStatus;
@@ -114,10 +114,10 @@ u32_t pow10(u32_t dwDegree)
 /**
  * @func stringToNum
  * @brief Chuyen do chuoi sang so
- * @param [byStr[MAX_LENGTH_FILE]] : chuoi dung de chuyen sang so
+ * @param [byStr[MAX_LENGTH_FiLE]] : chuoi dung de chuyen sang so
  * @retval u32_t
  */
-u32_t stringToNum(u8_t byStr[MAX_LENGTH_FILE])
+u32_t stringToNum(u8_t byStr[MAX_LENGTH_FiLE])
 {
     u32_t dwResult = 0;
     u32_t dwLengthStr = strlen(byStr);
@@ -138,17 +138,17 @@ u32_t stringToNum(u8_t byStr[MAX_LENGTH_FILE])
 void_t getMaxDelayTime()
 {
     u32_t dwMaxDelay = 0;
-    u8_t byEnd[MAX_LENGTH_FILE] = "";
+    u8_t byEnd[MAX_LENGTH_FiLE] = "";
     byEnd[0] = 10;
     u8_p pbyCheckEnd = g_fileStr;
 
-    u8_t byMinuteSet[MAX_LENGTH_FILE] = "";
-    u8_t byMinuteStatus[MAX_LENGTH_FILE] = "";
-    u8_t bySecondSet[MAX_LENGTH_FILE] = "";
-    u8_t bySecondStatus[MAX_LENGTH_FILE] = "";
+    u8_t byMinuteSet[MAX_LENGTH_FiLE] = "";
+    u8_t byMinuteStatus[MAX_LENGTH_FiLE] = "";
+    u8_t bySecondSet[MAX_LENGTH_FiLE] = "";
+    u8_t bySecondStatus[MAX_LENGTH_FiLE] = "";
 
-    u8_t byReqidSet[MAX_LENGTH_FILE] = "";
-    u8_t byReqidStatus[MAX_LENGTH_FILE] = "";
+    u8_t byReqidSet[MAX_LENGTH_FiLE] = "";
+    u8_t byReqidStatus[MAX_LENGTH_FiLE] = "";
     while (pbyCheckEnd != NULL)
     {
         u8_p pbyFindMinute = strstr(pbyCheckEnd, ":");
@@ -156,8 +156,8 @@ void_t getMaxDelayTime()
         // xu ly Time
         u8_p pbyFindSecond = strstr(pbyFindMinute + 1, ":");
         u8_p pbyFindEndTime = strstr(pbyFindSecond + 1, "]");
-        u8_t byDelayMinute[MAX_LENGTH_FILE] = "";
-        u8_t byDelaySecond[MAX_LENGTH_FILE] = "";
+        u8_t byDelayMinute[MAX_LENGTH_FiLE] = "";
+        u8_t byDelaySecond[MAX_LENGTH_FiLE] = "";
         u32_t dwLengthMinute = pbyFindSecond - pbyFindMinute - 1;
         for (u32_t i = 0; i < dwLengthMinute; i++)
             byDelayMinute[i] = *(pbyFindMinute + i + 1);
@@ -169,7 +169,7 @@ void_t getMaxDelayTime()
         u8_p pbyFindDirect = strstr(pbyCheckEnd, "\"cmd\":");
         u32_t dwLengthDirect = strlen("\"cmd\":");
         u8_p pbyEndDirect = strstr(pbyCheckEnd, ",");
-        u8_t byDirect[MAX_LENGTH_FILE] = "";
+        u8_t byDirect[MAX_LENGTH_FiLE] = "";
         for (u32_t i = 0; i < pbyEndDirect - pbyFindDirect - dwLengthDirect; i++)
             byDirect[i] = *(pbyFindDirect + i + dwLengthDirect);
 
@@ -180,13 +180,13 @@ void_t getMaxDelayTime()
         u32_t dwLengthReqidCode = pbyFindReqidEnd - pbyFindReqid - dwLengthReqid;
         if (strcmp(byDirect, "\"set\"") == 0)
         {
-            byReqidSet[MAX_LENGTH_FILE] = "";
+            byReqidSet[MAX_LENGTH_FiLE] = "";
             for (u32_t i = 0; i < dwLengthReqidCode; i++)
                 byReqidSet[i] = *(pbyFindReqid + i + dwLengthReqid);
         }
         else
         {
-            byReqidStatus[MAX_LENGTH_FILE] = "";
+            byReqidStatus[MAX_LENGTH_FiLE] = "";
             for (u32_t i = 0; i < dwLengthReqidCode; i++)
                 byReqidStatus[i] = *(pbyFindReqid + i + dwLengthReqid);
             if (strcmp(byReqidSet, byReqidStatus) != 0)
@@ -199,8 +199,8 @@ void_t getMaxDelayTime()
         // Xu ly Direct
         if (strcmp(byDirect, "\"set\"") == 0)
         {
-            byMinuteSet[MAX_LENGTH_FILE] = "";
-            bySecondSet[MAX_LENGTH_FILE] = "";
+            byMinuteSet[MAX_LENGTH_FiLE] = "";
+            bySecondSet[MAX_LENGTH_FiLE] = "";
             for (u32_t k = 0; k < dwLengthMinute; k++)
                 byMinuteSet[k] = *(byDelayMinute + k);
             u32_t dwLengthSecondSet = 0;
@@ -210,8 +210,8 @@ void_t getMaxDelayTime()
         }
         else
         {
-            byMinuteStatus[MAX_LENGTH_FILE] = "";
-            bySecondStatus[MAX_LENGTH_FILE] = "";
+            byMinuteStatus[MAX_LENGTH_FiLE] = "";
+            bySecondStatus[MAX_LENGTH_FiLE] = "";
             for (u32_t k = 0; k < dwLengthMinute; k++)
                 byMinuteStatus[k] = *(byDelayMinute + k);
             u32_t dwLengthSecondStatus = 0;
@@ -241,34 +241,34 @@ void_t getCountSentNews()
 }
 
 /**
- * @func getCountSentNewsWithInputCode
+ * @func getCountSentNewsWithinputCode
  * @brief thuc hien yeu cau 2: dem so ban tin voi ma network cho truoc
  * @param [] :
  * @retval void_t
  */
-void_t getCountSentNewsWithInputCode()
+void_t getCountSentNewsWithinputCode()
 {
-    u8_t byAddressNWK[MAX_LENGTH_FILE] = "";
+    u8_t byAddressNWK[MAX_LENGTH_FiLE] = "";
     printf("\nNhap dia chi nwk cua thiet bi: %");
     scanf("%s", byAddressNWK);
     printf("\n");
     u8_p pbyCheckEnd = g_fileStr;
-    u8_t byEnd[MAX_LENGTH_FILE] = "";
+    u8_t byEnd[MAX_LENGTH_FiLE] = "";
     byEnd[0] = 10;
     u8_p pbyStart = NULL;
     u8_p pbyEnd = NULL;
     u32_t dwCountNews = 0;
     while (pbyCheckEnd != NULL)
     {
-        u8_t byNews[MAX_LENGTH_FILE] = "";
-        u32_t dwNewsIndex = 0;
-        pbyStart = strstr(pbyCheckEnd, "[INFO]");
+        u8_t byNews[MAX_LENGTH_FiLE] = "";
+        u32_t dwNewsindex = 0;
+        pbyStart = strstr(pbyCheckEnd, "[iNFO]");
         pbyEnd = strstr(pbyCheckEnd + 1, byEnd);
-        u8_p pibIndexNews = NULL;
+        u8_p pibindexNews = NULL;
         if (pbyStart - pbyEnd < 0)
-            for (pibIndexNews = pbyStart; pibIndexNews != pbyEnd + 1; pibIndexNews++)
+            for (pibindexNews = pbyStart; pibindexNews != pbyEnd + 1; pibindexNews++)
             {
-                byNews[dwNewsIndex++] = *pibIndexNews;
+                byNews[dwNewsindex++] = *pibindexNews;
             }
 
         u8_p pbyFindSet = strstr(byNews, "\"set\"");
@@ -293,25 +293,25 @@ void_t getCountSentNewsWithInputCode()
  */
 void_t getCountSwitch()
 {
-    u8_t pbyBufferString[20][MAX_LENGTH_FILE];
-    u8_t pbyBufferEndPoint[20][MAX_LENGTH_FILE];
+    u8_t pbyBufferString[20][MAX_LENGTH_FiLE];
+    u8_t pbyBufferEndPoint[20][MAX_LENGTH_FiLE];
     u32_t dwNumberBufferString = 0;
-    u8_t byEnd[MAX_LENGTH_FILE] = "";
+    u8_t byEnd[MAX_LENGTH_FiLE] = "";
     byEnd[0] = 10;
     u8_p pbyCheckEnd = g_fileStr;
     u8_p pbyStart = NULL;
     u8_p pbyEnd = NULL;
     while (pbyCheckEnd != NULL)
     {
-        u8_t byNews[MAX_LENGTH_FILE] = "";
-        u32_t dwNewsIndex = 0;
-        pbyStart = strstr(pbyCheckEnd, "[INFO]");
+        u8_t byNews[MAX_LENGTH_FiLE] = "";
+        u32_t dwNewsindex = 0;
+        pbyStart = strstr(pbyCheckEnd, "[iNFO]");
         pbyEnd = strstr(pbyCheckEnd + 1, byEnd);
-        u8_p pibNewsIndex = NULL;
+        u8_p pibNewsindex = NULL;
         if (pbyStart - pbyEnd < 0)
-            for (pibNewsIndex = pbyStart; pibNewsIndex != pbyEnd + 1; pibNewsIndex++)
+            for (pibNewsindex = pbyStart; pibNewsindex != pbyEnd + 1; pibNewsindex++)
             {
-                byNews[dwNewsIndex++] = *pibNewsIndex;
+                byNews[dwNewsindex++] = *pibNewsindex;
             }
 
         u8_p pbyFindSet = strstr(byNews, "\"set\"");
@@ -326,7 +326,7 @@ void_t getCountSwitch()
         u8_p pbyNetWork = NULL;
         pbyNetWork = strstr(pbyNewsCode, "-");
         u32_t dwLengthNetWork = 0;
-        u8_t byResultNetWork[MAX_LENGTH_FILE] = "";
+        u8_t byResultNetWork[MAX_LENGTH_FiLE] = "";
         while (*(pbyNetWork + dwLengthNetWork) != ':')
         {
             byResultNetWork[dwLengthNetWork++] = *(pbyNetWork + dwLengthNetWork);
@@ -334,7 +334,7 @@ void_t getCountSwitch()
         u8_p pbyEndPoint = NULL;
         pbyEndPoint = strstr(pbyNetWork + dwLengthNetWork, "-");
         u32_t dwLengthEndPoint = 0;
-        u8_t byResultEndPoint[MAX_LENGTH_FILE] = "";
+        u8_t byResultEndPoint[MAX_LENGTH_FiLE] = "";
         while (*(pbyEndPoint + dwLengthEndPoint) != '"')
             byResultEndPoint[dwLengthEndPoint++] = *(pbyEndPoint + dwLengthEndPoint);
         u32_t dwCheckString = 0;
@@ -355,7 +355,7 @@ void_t getCountSwitch()
         pbyCheckEnd = strstr(pbyCheckEnd + 1, byEnd);
     }
     for (u32_t i = 1; i <= dwNumberBufferString; i++)
-        printf("thiet bi %d co dia chi la : NWK %s, ENDPOINT %s\n", i, pbyBufferString[i], pbyBufferEndPoint[i]);
+        printf("thiet bi %d co dia chi la : NWK %s, ENDPOiNT %s\n", i, pbyBufferString[i], pbyBufferEndPoint[i]);
 }
 
 /**
@@ -368,10 +368,10 @@ void_t getCountErrorNews()
 {
     u32_t dwCountErrorNews = 0;
     u8_p pbyCheckEnd = g_fileStr;
-    u8_t byEnd[MAX_LENGTH_FILE] = "";
+    u8_t byEnd[MAX_LENGTH_FiLE] = "";
     byEnd[0] = 10;
-    u8_t byReqidSet[MAX_LENGTH_FILE] = "";
-    u8_t byReqidStatus[MAX_LENGTH_FILE] = "";
+    u8_t byReqidSet[MAX_LENGTH_FiLE] = "";
+    u8_t byReqidStatus[MAX_LENGTH_FiLE] = "";
 
     while (pbyCheckEnd != NULL)
     {
@@ -379,7 +379,7 @@ void_t getCountErrorNews()
         u8_p pbyFindDirect = strstr(pbyCheckEnd, "\"cmd\":");
         u32_t dwLengthDirect = strlen("\"cmd\":");
         u8_p pbyEndDirect = strstr(pbyCheckEnd, ",");
-        u8_t byDirect[MAX_LENGTH_FILE] = "";
+        u8_t byDirect[MAX_LENGTH_FiLE] = "";
         for (u32_t i = 0; i < pbyEndDirect - pbyFindDirect - dwLengthDirect; i++)
             byDirect[i] = *(pbyFindDirect + i + dwLengthDirect);
 
@@ -389,13 +389,13 @@ void_t getCountErrorNews()
         u32_t dwLengthReqidCode = pbyFindReqidEnd - pbyFindReqid - dwLengthReqid;
         if (strcmp(byDirect, "\"set\"") == 0)
         {
-            byReqidSet[MAX_LENGTH_FILE] = "";
+            byReqidSet[MAX_LENGTH_FiLE] = "";
             for (u32_t i = 0; i < dwLengthReqidCode; i++)
                 byReqidSet[i] = *(pbyFindReqid + i + dwLengthReqid);
         }
         else
         {
-            byReqidStatus[MAX_LENGTH_FILE] = "";
+            byReqidStatus[MAX_LENGTH_FiLE] = "";
             for (u32_t i = 0; i < dwLengthReqidCode; i++)
                 byReqidStatus[i] = *(pbyFindReqid + i + dwLengthReqid);
             if (strcmp(byReqidSet, byReqidStatus) != 0)
@@ -417,17 +417,17 @@ void_t getAverageTimeDelay()
 {
     u32_t dwSumTimeDelay = 0;
     u32_t dwCountCorrectNews = 0;
-    u8_t byEnd[MAX_LENGTH_FILE] = "";
+    u8_t byEnd[MAX_LENGTH_FiLE] = "";
     byEnd[0] = 10;
     u8_p pbyCheckEnd = g_fileStr;
 
-    u8_t byMinuteSet[MAX_LENGTH_FILE] = "";
-    u8_t byMinuteStatus[MAX_LENGTH_FILE] = "";
-    u8_t bySecondSet[MAX_LENGTH_FILE] = "";
-    u8_t bySecondStatus[MAX_LENGTH_FILE] = "";
+    u8_t byMinuteSet[MAX_LENGTH_FiLE] = "";
+    u8_t byMinuteStatus[MAX_LENGTH_FiLE] = "";
+    u8_t bySecondSet[MAX_LENGTH_FiLE] = "";
+    u8_t bySecondStatus[MAX_LENGTH_FiLE] = "";
 
-    u8_t byReqidSet[MAX_LENGTH_FILE] = "";
-    u8_t byReqidStatus[MAX_LENGTH_FILE] = "";
+    u8_t byReqidSet[MAX_LENGTH_FiLE] = "";
+    u8_t byReqidStatus[MAX_LENGTH_FiLE] = "";
     while (pbyCheckEnd != NULL)
     {
         u8_p pbyFindMinute = strstr(pbyCheckEnd, ":");
@@ -435,8 +435,8 @@ void_t getAverageTimeDelay()
         // xu ly Time
         u8_p pbyFindSecond = strstr(pbyFindMinute + 1, ":");
         u8_p pbyFindEndTime = strstr(pbyFindSecond + 1, "]");
-        u8_t byDelayMinute[MAX_LENGTH_FILE] = "";
-        u8_t byDelaySecond[MAX_LENGTH_FILE] = "";
+        u8_t byDelayMinute[MAX_LENGTH_FiLE] = "";
+        u8_t byDelaySecond[MAX_LENGTH_FiLE] = "";
         u32_t dwLengthMinute = pbyFindSecond - pbyFindMinute - 1;
         for (u32_t i = 0; i < dwLengthMinute; i++)
             byDelayMinute[i] = *(pbyFindMinute + i + 1);
@@ -448,7 +448,7 @@ void_t getAverageTimeDelay()
         u8_p pbyFindDirect = strstr(pbyCheckEnd, "\"cmd\":");
         u32_t dwLengthDirect = strlen("\"cmd\":");
         u8_p pbyEndDirect = strstr(pbyCheckEnd, ",");
-        u8_t byDirect[MAX_LENGTH_FILE] = "";
+        u8_t byDirect[MAX_LENGTH_FiLE] = "";
         for (u32_t i = 0; i < pbyEndDirect - pbyFindDirect - dwLengthDirect; i++)
             byDirect[i] = *(pbyFindDirect + i + dwLengthDirect);
 
@@ -459,13 +459,13 @@ void_t getAverageTimeDelay()
         u32_t dwLengthReqidCode = pbyFindReqidEnd - pbyFindReqid - dwLengthReqid;
         if (strcmp(byDirect, "\"set\"") == 0)
         {
-            byReqidSet[MAX_LENGTH_FILE] = "";
+            byReqidSet[MAX_LENGTH_FiLE] = "";
             for (u32_t i = 0; i < dwLengthReqidCode; i++)
                 byReqidSet[i] = *(pbyFindReqid + i + dwLengthReqid);
         }
         else
         {
-            byReqidStatus[MAX_LENGTH_FILE] = "";
+            byReqidStatus[MAX_LENGTH_FiLE] = "";
             for (u32_t i = 0; i < dwLengthReqidCode; i++)
                 byReqidStatus[i] = *(pbyFindReqid + i + dwLengthReqid);
             if (strcmp(byReqidSet, byReqidStatus) != 0)
@@ -480,8 +480,8 @@ void_t getAverageTimeDelay()
         // Xu ly Direct
         if (strcmp(byDirect, "\"set\"") == 0)
         {
-            byMinuteSet[MAX_LENGTH_FILE] = "";
-            bySecondSet[MAX_LENGTH_FILE] = "";
+            byMinuteSet[MAX_LENGTH_FiLE] = "";
+            bySecondSet[MAX_LENGTH_FiLE] = "";
             for (u32_t k = 0; k < dwLengthMinute; k++)
                 byMinuteSet[k] = *(byDelayMinute + k);
             u32_t dwLengthSecondSet = 0;
@@ -491,8 +491,8 @@ void_t getAverageTimeDelay()
         }
         else
         {
-            byMinuteStatus[MAX_LENGTH_FILE] = "";
-            bySecondStatus[MAX_LENGTH_FILE] = "";
+            byMinuteStatus[MAX_LENGTH_FiLE] = "";
+            bySecondStatus[MAX_LENGTH_FiLE] = "";
             for (u32_t k = 0; k < dwLengthMinute; k++)
                 byMinuteStatus[k] = *(byDelayMinute + k);
             u32_t dwLengthSecondStatus = 0;
