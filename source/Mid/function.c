@@ -423,7 +423,7 @@ void_t getCountErrorNews()
  */
 void_t getAverageTimeDelay()
 {
-    u32_t dwAveTimeDelay;
+    u32_t dwAveTimeDelay = 0;
     processTimeDelay(TINH_TRUNG_BINH_DELAY_TIME, &dwAveTimeDelay);
     printf("Do tre trung binh la: %d Millisecond\n", dwAveTimeDelay);
 }
@@ -436,7 +436,7 @@ void_t getAverageTimeDelay()
  */
 void_t getMaxDelayTime()
 {
-    u32_t dwMaxDelay = 0;
+    u32_t dwMaxDelay;
     processTimeDelay(TINH_MAX_DELAY_TIME, &dwMaxDelay);
     printf("\nDo tre lon nhat la: %d Millisecond\n", dwMaxDelay);
 }
