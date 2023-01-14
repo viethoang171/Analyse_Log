@@ -127,6 +127,8 @@ static void_t findDirect(u8_p pbyCheckEnd, u8_t byDirect[MAX_LENGTH_DIRECT_NEWS]
  * @param [byDirect[MAX_LENGTH_DIRECT_NEWS]]: luu chuoi Direct
  * @param [byReqidSet[MAX_LENGTH_REQID]]: luu chuoi Reqid cua ban tin "set"
  * @param [byReqidStatus[MAX_LENGTH_REQID]]: luu chuoi Reqid cua ban tin "status"
+ * @param [pdwCountErrorNews]: con tro dem so ban tin loi
+ * @param [pdwCountCorrectNews]: con tro dem so ban tin dung
  * @retval u8_t
  */
 static u8_t checkErrorNews(u8_p pbyCheckEnd, u8_t byDirect[MAX_LENGTH_DIRECT_NEWS], u8_t byReqidSet[MAX_LENGTH_REQID], u8_t byReqidStatus[MAX_LENGTH_REQID], u32_p pdwCountErrorNews, u32_p pdwCountCorrectNews)
