@@ -28,6 +28,7 @@
 /*                              INCLUDE FILES                                 */
 #include <stdio.h>
 #include "../utils/typedefs.h"
+#include <string.h>
 #include "function.h"
 /******************************************************************************/
 
@@ -94,14 +95,70 @@ static u32_t stringToNum(u8_t byStr[MAX_LENGTH_STRING_NUM])
 {
     u32_t dwResult = 0;
     u32_t dwLengthStr = strlen(byStr);
+    u32_t dwChuSo;
     for (u32_t i = 0; i < dwLengthStr; i++)
     {
-        u32_t dwChuSo = byStr[dwLengthStr - i - 1] - 48;
+        dwChuSo = byStr[dwLengthStr - i - 1] - 48;
         dwResult += dwChuSo * pow10(i);
     }
     return dwResult;
 }
 
+/**
+ * @func findDirect
+ * @brief tinh thoi gian delay trong lich su file log dua theo yeu cau
+ * @param [pbyCheckEnd] : con tro kiem tra ket thuc file
+ * @param [byDirect[MAX_LENGTH_DIRECT_NEWS]]: luu chuoi Direct
+ * @retval void_t
+ */
+static void_t findDirect(u8_p pbyCheckEnd, u8_t byDirect[MAX_LENGTH_DIRECT_NEWS])
+{
+    u8_p pbyFindDirect = strstr(pbyCheckEnd, "\"cmd\":");
+    u32_t dwLengthDirect = strlen("\"cmd\":");
+    u8_p pbyEndDirect = strstr(pbyCheckEnd, ",");
+    for (u32_t i = 0; i < pbyEndDirect - pbyFindDirect - dwLengthDirect; i++)
+        byDirect[i] = *(pbyFindDirect + i + dwLengthDirect);
+}
+
+/**
+ * @func checkErrorNews
+ * @brief lay reqid cua set va status luu vao chuoi de kiem tra ban tin co loi hay khong
+ * @param [pbyCheckEnd] : con tro kiem tra ket thuc file
+ * @param [byDirect[MAX_LENGTH_DIRECT_NEWS]]: luu chuoi Direct
+ * @param [byReqidSet[MAX_LENGTH_REQID]]: luu chuoi Reqid cua ban tin "set"
+ * @param [byReqidStatus[MAX_LENGTH_REQID]]: luu chuoi Reqid cua ban tin "status"
+ * @retval u8_t
+ */
+static u8_t checkErrorNews(u8_p pbyCheckEnd, u8_t byDirect[MAX_LENGTH_DIRECT_NEWS], u8_t byReqidSet[MAX_LENGTH_REQID], u8_t byReqidStatus[MAX_LENGTH_REQID], u32_p pdwCountErrorNews, u32_p pdwCountCorrectNews)
+{
+    u8_p pbyFindReqid = strstr(pbyCheckEnd, "\"reqid\": \"");
+    u32_t dwLengthReqid = strlen("\"reqid\": \"");
+    u8_p pbyFindReqidEnd = strstr(pbyFindReqid + dwLengthReqid, "\"");
+    u32_t dwLengthReqidCode = pbyFindReqidEnd - pbyFindReqid - dwLengthReqid;
+    if (strcmp(byDirect, "\"set\"") == 0)
+    {
+        byReqidSet[MAX_LENGTH_REQID] = "";
+        for (u32_t i = 0; i < dwLengthReqidCode; i++)
+            byReqidSet[i] = *(pbyFindReqid + i + dwLengthReqid);
+    }
+    else
+    {
+        byReqidStatus[MAX_LENGTH_REQID] = "";
+        for (u32_t i = 0; i < dwLengthReqidCode; i++)
+            byReqidStatus[i] = *(pbyFindReqid + i + dwLengthReqid);
+        if (strcmp(byReqidSet, byReqidStatus) != 0)
+        {
+            *pdwCountErrorNews = *pdwCountErrorNews + 1;
+            return 0;
+        }
+        else
+        {
+            *pdwCountCorrectNews = *pdwCountCorrectNews + 1;
+            return 1;
+        }
+    }
+    return 2;
+}
 /**
  * @func processTimeDelay
  * @brief tinh thoi gian delay trong lich su file log dua theo yeu cau
@@ -111,6 +168,7 @@ static u32_t stringToNum(u8_t byStr[MAX_LENGTH_STRING_NUM])
 static void_t processTimeDelay(u32_t dwNameTask, u32_p pdwResult)
 {
     u32_t dwCountCorrectNews = 0;
+    u32_t dwCountErrorNews = 0;
     u8_t byEnd[2] = "";
     byEnd[0] = 10; // dau enter
     u8_p pbyCheckEnd = g_fileStr;
@@ -124,13 +182,13 @@ static void_t processTimeDelay(u32_t dwNameTask, u32_p pdwResult)
     u8_t byReqidStatus[MAX_LENGTH_REQID] = "";
     while (pbyCheckEnd != NULL)
     {
+        // xu ly time
         u8_p pbyFindMinute = strstr(pbyCheckEnd, ":");
-
-        // xu ly Time
         u8_p pbyFindSecond = strstr(pbyFindMinute + 1, ":");
         u8_p pbyFindEndTime = strstr(pbyFindSecond + 1, "]");
         u8_t byDelayMinute[MAX_LENGTH_MINUTE] = "";
         u8_t byDelaySecond[MAX_LENGTH_SECOND] = "";
+
         u32_t dwLengthMinute = pbyFindSecond - pbyFindMinute - 1;
         for (u32_t i = 0; i < dwLengthMinute; i++)
             byDelayMinute[i] = *(pbyFindMinute + i + 1);
@@ -138,37 +196,14 @@ static void_t processTimeDelay(u32_t dwNameTask, u32_p pdwResult)
         for (u32_t i = 0; i < dwLengthSecond; i++)
             byDelaySecond[i] = *(pbyFindSecond + i + 1);
 
-        // FindDirect
-        u8_p pbyFindDirect = strstr(pbyCheckEnd, "\"cmd\":");
-        u32_t dwLengthDirect = strlen("\"cmd\":");
-        u8_p pbyEndDirect = strstr(pbyCheckEnd, ",");
         u8_t byDirect[MAX_LENGTH_DIRECT_NEWS] = "";
-        for (u32_t i = 0; i < pbyEndDirect - pbyFindDirect - dwLengthDirect; i++)
-            byDirect[i] = *(pbyFindDirect + i + dwLengthDirect);
-
-        // FindCorrectNews
-        u8_p pbyFindReqid = strstr(pbyCheckEnd, "\"reqid\": \"");
-        u32_t dwLengthReqid = strlen("\"reqid\": \"");
-        u8_p pbyFindReqidEnd = strstr(pbyFindReqid + dwLengthReqid, "\"");
-        u32_t dwLengthReqidCode = pbyFindReqidEnd - pbyFindReqid - dwLengthReqid;
-        if (strcmp(byDirect, "\"set\"") == 0)
+        findDirect(pbyCheckEnd, byDirect);
+        u8_t byCheck = checkErrorNews(pbyCheckEnd, byDirect, byReqidSet, byReqidStatus, &dwCountErrorNews, &dwCountCorrectNews);
+        if (byCheck == 0) // neu ban tin loi thi khong tinh vao delaytime
         {
-            byReqidSet[MAX_LENGTH_REQID] = "";
-            for (u32_t i = 0; i < dwLengthReqidCode; i++)
-                byReqidSet[i] = *(pbyFindReqid + i + dwLengthReqid);
+            pbyCheckEnd = strstr(pbyCheckEnd + 1, byEnd);
+            continue;
         }
-        else
-        {
-            byReqidStatus[MAX_LENGTH_REQID] = "";
-            for (u32_t i = 0; i < dwLengthReqidCode; i++)
-                byReqidStatus[i] = *(pbyFindReqid + i + dwLengthReqid);
-            if (strcmp(byReqidSet, byReqidStatus) != 0)
-            {
-                pbyCheckEnd = strstr(pbyCheckEnd + 1, byEnd);
-                continue;
-            }
-        }
-
         // Xu ly Direct
         if (strcmp(byDirect, "\"set\"") == 0)
         {
@@ -199,7 +234,6 @@ static void_t processTimeDelay(u32_t dwNameTask, u32_p pdwResult)
             }
             else if (dwNameTask == TINH_TRUNG_BINH_DELAY_TIME)
             {
-                dwCountCorrectNews++;
                 *pdwResult += dwTimeDelay;
             }
         }
@@ -209,6 +243,30 @@ static void_t processTimeDelay(u32_t dwNameTask, u32_p pdwResult)
     {
         *pdwResult = *pdwResult / dwCountCorrectNews;
     }
+}
+
+/**
+ * @func getNews
+ * @brief Duyet den 1 ban tin va lay ban tin ra 1 chuoi
+ * @param [pbyCheckEnd] : con tro kiem tra ket thuc ban tin
+ * @param [byNews[MAX_LENGTH_FILE]] :chuoi luu ban tin
+ * @retval void_t
+ */
+static void_t getNews(u8_p pbyCheckEnd, u8_t byNews[MAX_LENGTH_FILE])
+{
+    u32_t dwNewsIndex = 0;
+    u8_p pbyStart = NULL;
+    u8_p pbyEnd = NULL;
+    u8_t byEnd[2] = "";
+    byEnd[0] = 10;
+    pbyStart = strstr(pbyCheckEnd, "[INFO]");
+    pbyEnd = strstr(pbyCheckEnd + 1, byEnd);
+    u8_p pibIndexNews = NULL;
+    if (pbyStart - pbyEnd < 0)
+        for (pibIndexNews = pbyStart; pibIndexNews != pbyEnd + 1; pibIndexNews++)
+        {
+            byNews[dwNewsIndex++] = *pibIndexNews;
+        }
 }
 /******************************************************************************/
 
@@ -264,22 +322,11 @@ void_t getCountSentNewsWithInputCode()
     u8_p pbyCheckEnd = g_fileStr;
     u8_t byEnd[2] = "";
     byEnd[0] = 10; // dau enter
-    u8_p pbyStart = NULL;
-    u8_p pbyEnd = NULL;
     u32_t dwCountNews = 0;
     while (pbyCheckEnd != NULL)
     {
         u8_t byNews[MAX_LENGTH_FILE] = "";
-        u32_t dwNewsIndex = 0;
-        pbyStart = strstr(pbyCheckEnd, "[INFO]");
-        pbyEnd = strstr(pbyCheckEnd + 1, byEnd);
-        u8_p pibIndexNews = NULL;
-        if (pbyStart - pbyEnd < 0)
-            for (pibIndexNews = pbyStart; pibIndexNews != pbyEnd + 1; pibIndexNews++)
-            {
-                byNews[dwNewsIndex++] = *pibIndexNews;
-            }
-
+        getNews(pbyCheckEnd, byNews);
         u8_p pbyFindSet = strstr(byNews, "\"set\"");
         if (pbyFindSet == NULL)
         {
@@ -304,30 +351,22 @@ void_t getCountSwitch()
     u8_t pbyBufferNetWork[20][MAX_LENGTH_NETWORK];
     u8_t pbyBufferEndPoint[20][MAX_LENGTH_ENDPOINT];
     u32_t dwNumberBufferNetWork = 0;
-    u8_t byEnd[2] = "";
-    byEnd[0] = 10; // dau enter
     u8_p pbyCheckEnd = g_fileStr;
-    u8_p pbyStart = NULL;
-    u8_p pbyEnd = NULL;
     while (pbyCheckEnd != NULL)
     {
         u8_t byNews[MAX_LENGTH_FILE] = "";
-        u32_t dwNewsIndex = 0;
-        pbyStart = strstr(pbyCheckEnd, "[INFO]");
-        pbyEnd = strstr(pbyCheckEnd + 1, byEnd);
-        u8_p pibNewsIndex = NULL;
-        if (pbyStart - pbyEnd < 0)
-            for (pibNewsIndex = pbyStart; pibNewsIndex != pbyEnd + 1; pibNewsIndex++)
-            {
-                byNews[dwNewsIndex++] = *pibNewsIndex;
-            }
+        u8_t byEnd[2] = "";
+        byEnd[0] = 10;
+        getNews(pbyCheckEnd, byNews);
 
+        // luu 2 chuoi NetWork va EndPoint
         u8_p pbyFindSet = strstr(byNews, "\"set\"");
         if (pbyFindSet == NULL)
         {
             pbyCheckEnd = strstr(pbyCheckEnd + 1, byEnd);
             continue;
         }
+
         u8_p pbyNewsCode = NULL;
         pbyNewsCode = strstr(pbyCheckEnd, "\"zwave");
 
@@ -345,6 +384,8 @@ void_t getCountSwitch()
         u8_t byResultEndPoint[MAX_LENGTH_ENDPOINT] = "";
         while (*(pbyEndPoint + dwLengthEndPoint) != '"')
             byResultEndPoint[dwLengthEndPoint++] = *(pbyEndPoint + dwLengthEndPoint);
+
+        // kiem tra da ton tai chuoi NetWork dang duyet den chua
         u32_t dwCheckString = 0;
         for (u32_t i = 1; i <= dwNumberBufferNetWork; i++)
             if (strcmp(byResultNetWork, pbyBufferNetWork[i]) == 0)
@@ -352,6 +393,8 @@ void_t getCountSwitch()
                 dwCheckString = 1;
                 break;
             }
+
+        // them chuoi dang duyet vao mang chua chuoi
         if (dwCheckString == 0)
         {
             ++dwNumberBufferNetWork;
@@ -375,6 +418,7 @@ void_t getCountSwitch()
 void_t getCountErrorNews()
 {
     u32_t dwCountErrorNews = 0;
+    u32_t dwCountCorrectNews = 0;
     u8_p pbyCheckEnd = g_fileStr;
     u8_t byEnd[2] = "";
     byEnd[0] = 10; // dau enter
@@ -383,33 +427,9 @@ void_t getCountErrorNews()
 
     while (pbyCheckEnd != NULL)
     {
-        u8_p pbyEndNews = strstr(pbyCheckEnd + 1, byEnd);
-        u8_p pbyFindDirect = strstr(pbyCheckEnd, "\"cmd\":");
-        u32_t dwLengthDirect = strlen("\"cmd\":");
-        u8_p pbyEndDirect = strstr(pbyCheckEnd, ",");
         u8_t byDirect[MAX_LENGTH_DIRECT_NEWS] = "";
-        for (u32_t i = 0; i < pbyEndDirect - pbyFindDirect - dwLengthDirect; i++)
-            byDirect[i] = *(pbyFindDirect + i + dwLengthDirect);
-
-        u8_p pbyFindReqid = strstr(pbyCheckEnd, "\"reqid\": \"");
-        u32_t dwLengthReqid = strlen("\"reqid\": \"");
-        u8_p pbyFindReqidEnd = strstr(pbyFindReqid + dwLengthReqid, "\"");
-        u32_t dwLengthReqidCode = pbyFindReqidEnd - pbyFindReqid - dwLengthReqid;
-        if (strcmp(byDirect, "\"set\"") == 0)
-        {
-            byReqidSet[MAX_LENGTH_REQID] = "";
-            for (u32_t i = 0; i < dwLengthReqidCode; i++)
-                byReqidSet[i] = *(pbyFindReqid + i + dwLengthReqid);
-        }
-        else
-        {
-            byReqidStatus[MAX_LENGTH_REQID] = "";
-            for (u32_t i = 0; i < dwLengthReqidCode; i++)
-                byReqidStatus[i] = *(pbyFindReqid + i + dwLengthReqid);
-            if (strcmp(byReqidSet, byReqidStatus) != 0)
-                dwCountErrorNews++;
-        }
-
+        findDirect(pbyCheckEnd, byDirect);
+        checkErrorNews(pbyCheckEnd, byDirect, byReqidSet, byReqidStatus, &dwCountErrorNews, &dwCountCorrectNews);
         pbyCheckEnd = strstr(pbyCheckEnd + 1, byEnd);
     }
     printf("\nSo ban tin loi: %d\n", dwCountErrorNews);
